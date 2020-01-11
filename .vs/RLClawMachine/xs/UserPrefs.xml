@@ -1,0 +1,33 @@
+﻿<Properties StartupConfiguration="{5047B8E3-0B4A-CCD1-47FC-13DC1120BDFF}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/ClawMachine/Standard Assets/Script/ClawAgent.cs">
+    <Files>
+      <File FileName="Assets/ClawMachine/Standard Assets/Script/GetPrize.cs" Line="16" Column="32" />
+      <File FileName="Assets/ClawMachine/Standard Assets/Script/MovimientosClaw.cs" Line="4" Column="30" />
+      <File FileName="Assets/ClawMachine/Standard Assets/Script/ClawAgent.cs" Line="40" Column="26" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="RLClawMachine" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="ClawMachine" expanded="True">
+                <Node name="Standard Assets" expanded="True">
+                  <Node name="Script" expanded="True">
+                    <Node name="ClawAgent.cs" selected="True" />
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="87f8a09e-dd4c-4208-b79a-ed791b5a000f" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
