@@ -17,21 +17,21 @@ public class ClawAgent : Agent
     int prizeOnStage; //檯面上剩下多少獎品
     int numberOfPrize; //總共獎品數量
     Vector3 ClawOriginPosition; //爪子初始位置(3維)
-    public GameObject[] Dice_static;
+    public GameObject[] Dice_static;//紀錄骰子物件
 
 
     // 初始化ml-agent
     public override void InitializeAgent()
     {
-        base.InitializeAgent();
-        m_RayPer = GetComponent<RayPerception>();
+        base.InitializeAgent(); //Agent基礎初始化
+        m_RayPer = GetComponent<RayPerception>();//舊版射線使用的宣告
         //useVectorObs = false; //關掉舊的射線
         numberOfPrize = 5; //從這裡可以調整獎品數量
         prizeOnStage = numberOfPrize;
         AgentSphere = GetComponent<MovimientosClaw>();
         m_MyArea = area.GetComponent<AreaReset>();
-        ClawOriginPosition = new Vector3(0.1f, 13.4f, -1.1f);
-        Dice_static = GameObject.FindGameObjectsWithTag("goal");
+        ClawOriginPosition = new Vector3(0.1f, 13.4f, -1.1f);//爪子初始位置
+        Dice_static = GameObject.FindGameObjectsWithTag("goal"); //取得所有骰子物件
     }
 
     //--------------------------觀察環境--------------------------//
@@ -196,10 +196,10 @@ public class ClawAgent : Agent
     public override void AgentReset()
     {
         Debug.Log("Agent Reset!");
-        prizeOnStage = numberOfPrize;
-        this.transform.position = ClawOriginPosition; //爪子位置
-        //m_MyArea.CleanPrizeArea(numberOfPrize); //清空獎品
-        //m_MyArea.CreatePrize(numberOfPrize); //擺放獎品
+        prizeOnStage = numberOfPrize; //重置獎品數量
+        this.transform.position = ClawOriginPosition; //爪子位置重置
+        //m_MyArea.CleanPrizeArea(numberOfPrize); //清空獎品，在version 3使用
+        //m_MyArea.CreatePrize(numberOfPrize); //擺放獎品，在version 3使用
         m_MyArea.ResetObjectPosition(); //重設場上骰子的位置
     }
 }

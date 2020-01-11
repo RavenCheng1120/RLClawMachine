@@ -19,20 +19,20 @@ git clone --branch latest_release https://github.com/Unity-Technologies/ml-agent
 ## 步驟二：重建 Claw_Machine_Simulator
 
 [Original Claw_Machine_Simulator](https://github.com/czazuaga/Claw_Machine_Simulator) By czazuaga    
-因原作者使用的 unity 版本與我們使用的不相符，開啟後會產生很多錯誤，如動畫消失、模型分離、碰撞失效，而且之後要將環境改造成適合 ml-agents 使用，因此要先將遊戲稍作修復與修改。 
+原作者使用的 unity 版本與我們使用的不相符，開啟後會產生很多錯誤，如動畫消失、模型分離、碰撞失效，而且之後要將環境改造成適合 ml-agents 使用，因此要先將遊戲稍作修復與修改。 
 
 * **Animator & Animation 動畫製作**    
 <img src="Pictures/Animator.png" align="middle" width="3000"/>    
 
-當爪子關閉時，`SetBool("Abrir", false)`且`SetBool("Cerrar", true)`，`Claw_close_ani`會被呼叫，而該動畫的配置如下，開始為爪子張開的狀態(三根爪子的 rotation 為x:135)，0.5秒後爪子是閉合的狀態(三根爪子的 rotation 為x:95)。     
+當爪子關閉時，`SetBool("Abrir", false)`且`SetBool("Cerrar", true)`，`Claw_close_ani`會被呼叫，而該動畫的配置如下，開始為爪子張開的狀態(三根爪子的 rotation 為x:135)，0.5秒後爪子是閉合的狀態(三根爪子的 rotation 為x:95)。  
+當爪子開啟時，`SetBool("Abrir", true)`且`SetBool("Cerrar", false)`，`Claw_open_ani`會被呼叫，與上方爪子關閉的操作相反。   
 <img src="Pictures/Animation.png" align="middle" width="3000"/>     
-
-當爪子開啟時，`SetBool("Abrir", true)`且`SetBool("Cerrar", false)`，`Claw_open_ani`會被呼叫，與上方爪子關閉的操作相反。    
+    
 * **建造爪子與Collider**
-<img src="Pictures/ClawCollider.png" align="middle" width="3000"/>    
-
 多個 Capsule Collider 沿著爪子排列，讓爪子不會穿透物體，能夠與獎品產生碰撞。因為 Mesh Collider 損毀，因此用這種方法代替。   
-原始爪子物件損毀，將模型重新放入 Scene 之中，設定 MovimientosClaw.cs 的參數。    
+原始爪子物件損毀，將模型重新放入 Scene 之中，設定 MovimientosClaw.cs 的參數。  
+
+<img src="Pictures/ClawCollider.png" align="middle" width="3000"/>      
 
 * **其他細部調整**
 為各個物件建立 Prefeb，以便複製與更改。    
@@ -50,3 +50,5 @@ git clone --branch latest_release https://github.com/Unity-Technologies/ml-agent
 * 在 stage 物件中加入平面，當獎品與平面發生碰撞，呼叫 `GetPrize.cs` 的 OnTriggerEnter。    
 * 在 Main Camera/Canvas 之中加上 Text 與 `DisplayArea.cs`，紀錄獎品進洞所獲得的 reward 跟 step 。
 * stage 中加入 `AreaReset.cs` 以便在到達 MaxStep 時重置環境。
+
+**其他詳細程式碼解釋與訓練方法，會在README中講解。**

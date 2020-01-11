@@ -7,7 +7,7 @@ ml-agent version: ML-Agents Beta 0.12.0
 
 ## Documentation
 
-* 學習從頭打造自動夾娃娃機，[文件在此](BuildFromStart.md)
+* 學習從頭打造自動夾娃娃機，[文件在此](BuildFromStart.md)!!!!
 * 原始的夾娃娃機遊戲 [Claw_Machine_Simulator](https://github.com/czazuaga/Claw_Machine_Simulator)
 * [Ml-agents](https://github.com/Unity-Technologies/ml-agents)官方文件
 * 莫凡的講解 [Proximal Policy Optimization](https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/6-4-DPPO/)(PPO)
@@ -40,11 +40,104 @@ MaxStep 為16000，每步減少 reward(-1/MaxStep)改成在所有時刻都發生
 Ray Perception Sensor Component 3D形狀改為三層平面，各層有8條射線，三層各自有不同角度。    
 MaxStep 為24000，爪子碰撞獎品時會增加 reward(0.05)，以利 agent 學習到要靠近爪子。    
 獎品從各式形狀的物品改成固定的骰子，每次重置場景時，6顆骰子會隨機的在場上落下，以確保訓練的多樣性。
+
+**第四版**：
+去掉所有射線，改成收集獎品骰子的位置(x, y, z)，與爪子的位置做相減。    
+場上骰子改為5顆(有嘗試1顆骰子，效果較為不優)，並在落下獎品洞口或是掉出場外一定高度後，會再度隨機擺回場上。    
+
 <img src="Pictures/V3_Ray_data.png" align="middle" width="742"/>    
     
 <img src="Pictures/V3_Ray.png" align="middle" width="3000"/>    
 
-**第四版**：
-去掉所有射線，改成收集獎品骰子的位置(x, y, z)，與爪子的位置做相減。    
-場上骰子改為5顆(有嘗試1顆骰子，效果較為不優)，並在落下獎品洞口或是掉出場外一定高度後，會再度隨機擺回場上。
+## 程式碼解析
 
+### MovimientosClaw 
+
+主要為**FixedUpdate()**區塊。若`if (PuedeControlarse)`為true，則可以控制爪子移動，先確認爪子沒有超出邊界，再透過`Input.GetKey(KeyCode)`獲得鍵盤按鍵 input。當爪子到底時，會觸發動畫：    
+```c#
+    StartCoroutine(CerrarClaw(2.0f));
+    PuedeControlarse = false;
+```
+這會觸發連鎖反應，邊控制動畫邊呼叫不同函式，來完成夾取與投放獎品的動作。    
+SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEnlaCesta -> subirGanchoDeLaCesta -> backToCenter -> goToCenter -> PuedeControlarse -> 完成一次循環。    
+(因為夾娃娃機遊戲的作者是西班牙人，許多變數與函式是用西班牙文撰寫)    
+
+### ClawAgent
+
+需要在程式碼上方加上`using MLAgents;`。    
+**InitializeAgent()**：一開始先初始化Agent。    
+```c#
+    public override void InitializeAgent()
+    {
+        base.InitializeAgent(); //Agent基礎初始化
+        m_RayPer = GetComponent<RayPerception>(); //舊版射線使用的宣告
+        useVectorObs = false; //關掉舊的射線
+        numberOfPrize = 5; //從這裡可以調整獎品數量
+        prizeOnStage = numberOfPrize; //紀錄場上的獎品數量
+        AgentSphere = GetComponent<MovimientosClaw>();
+        m_MyArea = area.GetComponent<AreaReset>();
+        ClawOriginPosition = new Vector3(0.1f, 13.4f, -1.1f); //爪子初始位置
+        Dice_static = GameObject.FindGameObjectsWithTag("goal"); //取得所有骰子物件
+    }
+```
+
+**CollectObservations()**：    
+觀察環境，收集指定的資訊。以下是沒有射線時觀察的數值。    
+```c#
+    AddVectorObs(gameObject.transform.position - Claws.transform.position); //觀察爪子跟控制圓球的相對位置
+    AddVectorObs(AgentSphere.PuedeControlarse); //觀察是在否可以控制爪子的狀態
+    foreach (GameObject dice in Dice_static)
+    {
+        AddVectorObs(Claws.transform.position - dice.transform.position);
+    }
+```
+
+**Heuristic()**：    
+取得鍵盤輸入，記錄到 float[] vectorAction 中。    
+共有六種 action 方式，分別是W, A, S, D, Space, Don't move。    
+
+**AgentAction()**：    
+拿取 float[] vectorAction ，呼叫 MoveAgent(vectorAction) 做出動作。    
+並且每走一步，reward會減少-1/maxStep，`AddReward(-1f / agentParameters.maxStep);`。    
+
+**MoveAgent(float[] act)**：    
+如 MovimientosClaw.cs 的設定，用 act 做出動作，對環境產生影響。    
+
+**AgentReset()**：    
+```c#
+    Debug.Log("Agent Reset!");
+    prizeOnStage = numberOfPrize;
+    this.transform.position = ClawOriginPosition; //爪子位置重置
+    // m_MyArea.CleanPrizeArea(numberOfPrize); //清空獎品，在version 3使用
+    // m_MyArea.CreatePrize(numberOfPrize); //擺放獎品，在version 3使用
+    m_MyArea.ResetObjectPosition(); //重設場上骰子的位置
+```
+
+### GetPrize
+
+有獎品掉落洞口，與洞口平面閘門觸發Trigger，便呼叫Agent script中的函式。    
+```C#
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag=="goal")
+        {
+            clawAgent.GetPrize_AddScore();
+        }
+    }
+```
+
+### AreaReset
+
+**CleanPrizeArea(int deleteNumber)**：    
+清除所有場上獎品，利用parent與child的關係，把stage裡面還有goal tag的物件刪除。    
+```c#
+    public void CleanPrizeArea(int deleteNumber)
+    {
+        parent = GameObject.Find("stage");
+        foreach (Transform child in parent.transform)
+            if (child.CompareTag("goal"))
+            {
+                Destroy(child.gameObject);
+            }
+    }
+````
