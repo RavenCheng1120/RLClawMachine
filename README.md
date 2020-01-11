@@ -111,7 +111,7 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
     m_MyArea.ResetObjectPosition(); //重設場上骰子的位置
 ```
 
-### 3.GetPrize.cs
+### 3. GetPrize.cs
 
 有獎品掉落洞口，與洞口平面閘門觸發Trigger，便呼叫Agent script中的函式。    
 ```C#
@@ -124,7 +124,7 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
     }
 ```
 
-### 4.AreaReset.cs
+### 4. AreaReset.cs
 
 **CleanPrizeArea(int deleteNumber)**：    
 清除所有場上獎品，利用parent與child的關係，把stage裡面還有goal tag的物件刪除。    
@@ -145,7 +145,7 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
 `var newObject = Instantiate(desiredObject, Vector3.zero, Quaternion.Euler(0f, 0f, 0f));` 動態生成物件。    
 用 Random 的方法決定骰子的重生位置，並測量底盤物件的長寬與位置，避免骰子生成在機台外面。    
 
-### 5.DisplayArea.cs
+### 5. DisplayArea.cs
 
 用GetCumulativeReward()取得目前的reward值，並以GetStepCount()取得Step數量。    
 ```c#
@@ -165,3 +165,17 @@ mlagents-learn config/trainer_config.yaml --run-id=IDNAME --train
 隨後按下unity的開始按鈕，agnet便會開始訓練，此訓練是經過加速的，約35秒可以訓練一回合。    
 trainer_config.yaml檔案中的參數設定會影響訓練，有預設的參數，也可以自行新增。    
 在訓練結束後 ml-agents-master/models中會出現訓練結果，將ClawBody Behavior.nn檔複製到專案中，放到`Behavior Parameters`的model中，按下unity的開始按鈕，就能看到訓練的成果。    
+在 ml-agents-master 之下輸入`tensorboard --logdir=summaries`，可以到localhost:6006看訓練的過程資料。    
+
+<img src="Pictures/tensorboard.png" align="middle" width="3000"/>      
+
+## 最終成品
+
+還有多方需要調整，可以從簡化遊戲開始下手，例如調整到只有向右與向前的按鈕，而一按空白鍵就直接進入動畫。    
+以下是我們未來需要思考的問題：
+* 夾取物品太過困難，進洞次數太少，能夠學習的經驗不足。
+* 「夾中獎品」到「獎品進洞」，這兩項事件間隔太久，reward所給的反饋不及時。
+* 獎品的數量該多還是少？場上獎品多 → 環境複雜，要接受的訊息量過多。場上獎品少 → 命中率過低，難以學習。
+* 觀測方式應該使用射線還是直接讀取座標。
+
+<img src="Pictures/Result.png" align="middle" width="3000"/>  
