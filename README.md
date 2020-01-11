@@ -18,7 +18,8 @@ ml-agent version: ML-Agents Beta 0.12.0
 ```
 git clone https://github.com/RavenCheng1120/RLClawMachine.git
 ```
-下載完請在 unity hub 2019.2.0f1 中開啟。
+下載完請在 unity hub 2019.2.0f1 中開啟。    
+
 2. 用訓練完的model試跑
 找到 RLClawMachine⁩/Assets⁩/ClawMachine⁩/Standard Assets⁩/Models⁩/ClawBody_position.nn，放到`Behavior Parameters`的model中，按下unity的開始按鈕，就能看到訓練的成果。 
 
