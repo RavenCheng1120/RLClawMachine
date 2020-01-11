@@ -43,17 +43,15 @@ MaxStep 為24000，爪子碰撞獎品時會增加 reward(0.05)，以利 agent �
 
 **第四版**：
 去掉所有射線，改成收集獎品骰子的位置(x, y, z)，與爪子的位置做相減。    
-場上骰子改為5顆(有嘗試1顆骰子，效果較為不優)，並在落下獎品洞口或是掉出場外一定高度後，會再度隨機擺回場上。    
-
-<img src="Pictures/V3_Ray_data.png" align="middle" width="742"/>    
+場上骰子改為5顆(有嘗試1顆骰子，效果較為不優)，並在落下獎品洞口或是掉出場外一定高度後，會再度隨機擺回場上。     
     
 <img src="Pictures/V3_Ray.png" align="middle" width="3000"/>    
 
-## 程式碼解析
+## 程式碼解析 Code Explanation
 
-### MovimientosClaw 
+### 1. MovimientosClaw.cs 
 
-主要為**FixedUpdate()**區塊。若`if (PuedeControlarse)`為true，則可以控制爪子移動，先確認爪子沒有超出邊界，再透過`Input.GetKey(KeyCode)`獲得鍵盤按鍵 input。當爪子到底時，會觸發動畫：    
+主要為 **FixedUpdate()** 區塊。若`if (PuedeControlarse)`為true，則可以控制爪子移動，先確認爪子沒有超出邊界，再透過`Input.GetKey(KeyCode)`獲得鍵盤按鍵 input。當爪子到底時，會觸發動畫：    
 ```c#
     StartCoroutine(CerrarClaw(2.0f));
     PuedeControlarse = false;
@@ -62,7 +60,7 @@ MaxStep 為24000，爪子碰撞獎品時會增加 reward(0.05)，以利 agent �
 SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEnlaCesta -> subirGanchoDeLaCesta -> backToCenter -> goToCenter -> PuedeControlarse -> 完成一次循環。    
 (因為夾娃娃機遊戲的作者是西班牙人，許多變數與函式是用西班牙文撰寫)    
 
-### ClawAgent
+### 2. ClawAgent.cs
 
 需要在程式碼上方加上`using MLAgents;`。    
 **InitializeAgent()**：一開始先初始化Agent。    
@@ -113,7 +111,7 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
     m_MyArea.ResetObjectPosition(); //重設場上骰子的位置
 ```
 
-### GetPrize
+### 3.GetPrize.cs
 
 有獎品掉落洞口，與洞口平面閘門觸發Trigger，便呼叫Agent script中的函式。    
 ```C#
@@ -126,7 +124,7 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
     }
 ```
 
-### AreaReset
+### 4.AreaReset.cs
 
 **CleanPrizeArea(int deleteNumber)**：    
 清除所有場上獎品，利用parent與child的關係，把stage裡面還有goal tag的物件刪除。    
@@ -141,3 +139,29 @@ SoltarPremio -> SoltarPremioEnLaCesta -> bajarGanchoYSoltarPremio -> AbrirClawEn
             }
     }
 ````
+
+**創造骰子**：    
+呼叫韓式順序為：CreatePrize() -> CreateObject() -> PlaceObject()    
+`var newObject = Instantiate(desiredObject, Vector3.zero, Quaternion.Euler(0f, 0f, 0f));` 動態生成物件。    
+用 Random 的方法決定骰子的重生位置，並測量底盤物件的長寬與位置，避免骰子生成在機台外面。    
+
+### 5.DisplayArea.cs
+
+用GetCumulativeReward()取得目前的reward值，並以GetStepCount()取得Step數量。    
+```c#
+    void Update()
+    {
+        ScoreText.text = clawAgent.GetCumulativeReward().ToString("0.000");
+        StepText.text = clawAgent.GetStepCount().ToString();
+    }
+```
+
+## 訓練Agent
+
+在 ml-agents-master 開啟終端機，輸入指令：
+```
+mlagents-learn config/trainer_config.yaml --run-id=IDNAME --train
+```
+隨後按下unity的開始按鈕，agnet便會開始訓練，此訓練是經過加速的，約35秒可以訓練一回合。    
+trainer_config.yaml檔案中的參數設定會影響訓練，有預設的參數，也可以自行新增。    
+在訓練結束後 ml-agents-master/models中會出現訓練結果，將ClawBody Behavior.nn檔複製到專案中，放到`Behavior Parameters`的model中，按下unity的開始按鈕，就能看到訓練的成果。    
