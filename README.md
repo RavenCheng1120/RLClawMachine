@@ -12,7 +12,19 @@ ml-agent version: ML-Agents Beta 0.12.0
 * [Ml-agents](https://github.com/Unity-Technologies/ml-agents)官方文件
 * 莫凡的講解 [Proximal Policy Optimization](https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/6-4-DPPO/)(PPO)
 
+## 使用教學
+
+1. 下載此專案
+```
+git clone https://github.com/RavenCheng1120/RLClawMachine.git
+```
+下載完請在 unity hub 2019.2.0f1 中開啟。
+2. 用訓練完的model試跑
+找到 RLClawMachine⁩/Assets⁩/ClawMachine⁩/Standard Assets⁩/Models⁩/ClawBody_position.nn，放到`Behavior Parameters`的model中，按下unity的開始按鈕，就能看到訓練的成果。 
+
 ## 不同 Version 的嘗試
+
+這個專案是第四版本，前三版本未上傳到此。    
 
 **第一版**：    
 使用舊版 Ray Perception 3D，useVectorObs可以開啟(1)或關閉(0)射線。另外會觀察 Agent 的絕對位置。    
