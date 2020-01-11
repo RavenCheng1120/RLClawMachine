@@ -40,8 +40,9 @@ MaxStep 為16000，每步減少 reward(-1/MaxStep)改成在所有時刻都發生
 Ray Perception Sensor Component 3D形狀改為三層平面，各層有8條射線，三層各自有不同角度。    
 MaxStep 為24000，爪子碰撞獎品時會增加 reward(0.05)，以利 agent 學習到要靠近爪子。    
 獎品從各式形狀的物品改成固定的骰子，每次重置場景時，6顆骰子會隨機的在場上落下，以確保訓練的多樣性。
-<img src="Pictures/V3_Ray_data.png" align="middle"/><br>
-<img src="Pictures/V3_Ray.png" align="middle" width="3000"/>
+<img src="Pictures/V3_Ray_data.png" align="middle" width="742"/>    
+    
+<img src="Pictures/V3_Ray.png" align="middle" width="3000"/>    
 
 **第四版**：
 去掉所有射線，改成收集獎品骰子的位置(x, y, z)，與爪子的位置做相減。    
