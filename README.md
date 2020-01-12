@@ -1,7 +1,6 @@
 # RLClawMachine 強化式機器學習期末專題
 
-此專題的目標是製作一個自動夾娃娃機器人，利用 [czazuaga](https://github.com/czazuaga) 所製作的 unity Claw_Machine_Simulator，加上 unity 的 ml-agents，來訓練夾娃娃機自動夾取獎品。可以參考 Unity-Technologies
-/ml-agents 的官方文件與線上教學，來進一步了解 ml-agent 的運作方式。    
+此專題的目標是製作一個自動夾娃娃機器人，利用 [czazuaga](https://github.com/czazuaga) 所製作的 unity Claw_Machine_Simulator，加上 unity 的 ml-agents，來訓練夾娃娃機自動夾取獎品。可以參考 Unity-Technologies/ml-agents 的官方文件與線上教學，來進一步了解 ml-agent 的運作方式。    
 unity version: 2019.2.0f1    
 ml-agent version: ML-Agents Beta 0.12.0     
 
@@ -10,7 +9,7 @@ ml-agent version: ML-Agents Beta 0.12.0
 * 學習從頭打造自動夾娃娃機，[文件在此](BuildFromStart.md)!!!!
 * 原始的夾娃娃機遊戲 [Claw_Machine_Simulator](https://github.com/czazuaga/Claw_Machine_Simulator)
 * [Ml-agents](https://github.com/Unity-Technologies/ml-agents)官方文件
-* 莫凡的講解 [Proximal Policy Optimization](https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/6-4-DPPO/)(PPO)
+* 莫煩的講解 [Proximal Policy Optimization](https://morvanzhou.github.io/tutorials/machine-learning/reinforcement-learning/6-4-DPPO/)(PPO)
 
 ## 使用教學
 
@@ -20,7 +19,14 @@ git clone https://github.com/RavenCheng1120/RLClawMachine.git
 ```
 下載完請在 unity hub 2019.2.0f1 中開啟。    
 
-2. 用訓練完的model試跑
+2. 下載ml-agents    
+在終端機輸入指令：    
+```
+git clone --branch latest_release https://github.com/Unity-Technologies/ml-agents.git
+```
+或是到Github專案頁面下載2019年11月的版本。    
+
+3. 用訓練完的model試跑
 找到 RLClawMachine⁩/Assets⁩/ClawMachine⁩/Standard Assets⁩/Models⁩/ClawBody_position.nn，放到`Behavior Parameters`的model中，按下unity的開始按鈕，就能看到訓練的成果。 
 
 ## 不同 Version 的嘗試
